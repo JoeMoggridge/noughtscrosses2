@@ -1,44 +1,4 @@
-xo_main_mk7
-Details
-Activity
-YESTERDAY
 
-You moved an item to
-Tue 21:44
-Google Drive Folder
-programming
-Text
-xo_main_mk7
-
-You edited an item
-Drive Notepad • Tue 17:09
-Text
-xo_main_mk7
-
-You renamed an item
-Drive Notepad • Tue 15:17
-Text
-xo_main_mk7
-xo_mk7
-
-You edited an item
-Drive Notepad • Tue 15:14
-Text
-xo_mk7
-EARLIER THIS WEEK
-
-You edited an item
-Drive Notepad • Mon 18:16
-Text
-xo_mk7
-
-You created an item in
-Drive Notepad • Mon 16:19
-Google Drive Folder
-My Drive
-Binary File
-xo_mk7
-New Team Drive
 
 ///////////////////////////////////////////////////////////////////////////////
 //C++
