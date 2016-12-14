@@ -76,7 +76,7 @@ class Tree_Node
        char board[9];//state of the board at this point in the game tree
 
        //bool max_or_min; //true if this node is a maximum of the previous nodes.
-       double node_value; //+10 for victory from this node, -10 if this node causes loss.
+       double value; //+10 for victory from this node, -10 if this node causes loss.
                             //eventually i plan to a wider variety of numbers here.
       
        int depth; //0 for top level nodes, all the way down to 8 for terminating nodes.
@@ -86,11 +86,11 @@ class Tree_Node
                                     //some of the pointers might be NULL if moves cannot be played there
 
     public:
-        Tree_Node(game_state* p_game, Tree_Node* leaves); //constructor. second argument is an array of pointers to the lower down nodes
+        Tree_Node(game_state* p_game); //constructor. second argument is an array of pointers to the lower down nodes
         Tree_Node(game_state* p_game, int value); //constructor for a terminating node.
 
         double get_node_value(void);
-        Tree_node* get_node (int i);//returns leaves[i]
+        Tree_node* get_lower_node (int i);//returns leaves[i]
         
         //double get_next_node(int depth);//returns a rarandom leaf at 
 };
@@ -103,7 +103,7 @@ class Tree//will store the best possible move at each node
    public:
         Game_Tree(Game_State* p_game, bool pgoesfirst); //constructor. 
         
-        double get_next_node(int depth, int i);//returns the next element node at a given depth.
+        double get_next_node(int depth, int i);//returns the next node at a given depth.
   
         //Game_Leaf* picknextmove(double randomness);//returns the next play the computer should make
                                                     //if randomness is non zero, then the computer will sometimes pick non optimal moves
