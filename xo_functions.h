@@ -4,8 +4,7 @@
  
  
 //---------------- protoype declarations --------------------------
-// This is the content of the .h file, which is where the declarations go
-
+//the detail of what these finctions do is in the .cpp file of the same name.
 
 //Game_State functions
 Game_State::Game_State (void);//constructor. done
