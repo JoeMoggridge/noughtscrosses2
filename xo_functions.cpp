@@ -1,28 +1,3 @@
-xo_functions_mk7.cpp
-Details
-Activity
-YESTERDAY
-
-You moved an item to
-Tue 21:44
-Google Drive Folder
-programming
-C++
-xo_functions_mk7.cpp
-
-You edited an item
-Drive Notepad • Tue 17:57
-C++
-xo_functions_mk7.cpp
-
-You created an item in
-Drive Notepad • Tue 15:14
-Google Drive Folder
-My Drive
-Text
-xo_functions_mk7.cpp
-No recorded activity before 13 December 2016
-New Team Drive
 
 //Game_State functions
 Game_State::Game_State (void)//constructor. done
@@ -201,42 +176,91 @@ bool Human::make_move (Game_State* p_game)//TODO
     return false;
 }
 
-double Computer::minimax(Game_leaf* node, int depth, bool maximizing )
+double Game_Tree::Game_Tree(Game_state* p_game, bool playergoesfirst)
 {
-    if (depth > 8 || node.get_node_value()== 1)
-         return node.get_node_value();
-         
+    //runs the minimax algorithm in order to contrauct the game tree and assign weights to each node.
+    
     double best_value=0;
     double V;
-    Game_Leaf trial_leaf;
+    Game_Leaf* trial_leaf, next_leaf;
     const double INF= std::numeric_limits<float>::infinity();
+    bool maximizing= !playergoesfirst;
+    int win_value= 10 ;//defines the weight associated with a win
+    int index; //used to cut down the number of if satements
+    double weighting; //defines how the wieght of a previos node is determined based on the lower nodes
     
-    if (maximizing==true)
+    
+    //recursively call each layer. build tree from bottom up.
+     depth=9; 
+    
+    //base case
+    if (depth > 8 || p_game->victory()!= ' ')//'if (this is a terminating node)'
     {
-        best_value = −INF;
-        for (int i=0; i<9 ;i++)
+        
+        for (int i=0; i<9 ; i++)
         {
-            trial_leaf = tree->current_leaf->get_next_leaf (i);
+            //these next two if statements are used to make sure maximum and minimums are correctly assigned.
+            if (playergoesfirst==true)
+                index =1;
+            else /*playergoesfirst=false*/
+                index=0;
+
+            if (p_game->victory()=='X') //x win
+                trial_leaf= Tree_Node(p_game, win_value*pow(-1, index));
+            else if (p_game->victory()=='O' )   //o win
+                trial_leaf= Tree_Node(p_game, win_value*pow(-1, index+1));
+            else    //draw
+               trial_leaf=Tree_Node(p_game, 0);
             
-             v = minimax(trial_leaf, depth + 1, false)
-             bestValue = max(bestValue, v)
-         return bestValue
+            next_leaf.leaves[i]= trial_leaf;
         }
         
     }
-
-    else    //(* minimizing player *)
+    //else recursive
+    else
     {
-         best_value = INF;
-         for (int i=0; i<9 ;i++)
+        for (int i=0; i<(9-depth) ; i++)
         {
-            trial_leaf = tree->current_leaf->get_next_leaf (i);
-            
-             v = minimax(tiral leaf, depth + 1, true)
-            bestValue = min(bestValue, v)
-        }
-        return bestValue
+                 current_leaf = Tree_Node(p_game, Current )
+                
+
+         }
     }
+    
+    //asisgn the head leaf
+    /*
+    for (int depth=0; depth<8; depth++)
+    {//loop throught the entire tree, generate the tree.
+        
+        if (maximizing==true)
+            best_value = −INF;
+        else /* minimizing player*/
+         /*   best_value = INF;
+        
+        
+        }
+        
+        maximizing= !maximizing;
+        
+    }
+    
+    /*
+    if (depth > 8 || p_game->victory()!= ' ')//'if (this is a terminating node)'
+    {
+        int index=0;//this is used to change the sign of the terminating nodes, depending on whehter a victory for X is good or bad
+        if (player goesfirst==true)
+            index=1;
+        
+        if (p_game->victory()=='X' && playergoesfirst== true)
+                this.current_leaf->node_value= 10*pow(-1, index);
+        else if (p_game->victory()=='O')
+                this.current_leaf->node_value= 10*pow(-1, index+1);
+        }
+    }
+         return node.get_node_value();
+         
+    
+    */
         
 }
 
