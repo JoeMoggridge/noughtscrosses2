@@ -19,7 +19,7 @@
 #include <string.h>
 #include <windows.h>//needed for call to "exit()"
 #include <math.h>
-#include "xo_functions_mk7.h"//include prototype declarations for class functions. 
+#include "xo_functions.h"//include prototype declarations for class functions. 
                             //the classes themselves are written in the cpp file of the same name.
 
 using namespace std;
