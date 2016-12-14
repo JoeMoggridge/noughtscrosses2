@@ -28,7 +28,8 @@ class Game_State
 {
     char board[9];// board is numbered from 0 to 8.
     int game_turn;
-public:
+    //PROBLEM: need to add function for overlaoded copy operator.
+  public:
     Game_State (void); //default constructor
     void draw_board (void);
     bool make_move (char player_colour, int position);//returns true, and updates the game state if 'position' is a legal move. else, returns false
@@ -72,8 +73,8 @@ class Human: public Player //human is a subclass of player
 class Tree_Node
 {
     protected:
-       int game_turn;
-       char board[9];//state of the board at this point in the game tree
+       Game_state* state, temp;
+  
 
        //bool max_or_min; //true if this node is a maximum of the previous nodes.
        double value; //+10 for victory from this node, -10 if this node causes loss.
@@ -86,8 +87,8 @@ class Tree_Node
                                     //some of the pointers might be NULL if moves cannot be played there
 
     public:
-        Tree_Node(game_state* p_game); //constructor. second argument is an array of pointers to the lower down nodes
-        Tree_Node(game_state* p_game, int value); //constructor for a terminating node.
+        Tree_Node(Tree_Node* current_leaf,  game_state* p_game); //constructor. second argument is an array of pointers to the lower down nodes
+        Tree_Node(Tree_Node* current_leaf, game_state* p_game, int value); //constructor for a terminating node.
 
         double get_node_value(void);
         Tree_node* get_lower_node (int i);//returns leaves[i]
