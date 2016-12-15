@@ -1,3 +1,14 @@
+class Human: public Player //human is a subclass of player
+{
+    public:
+        Human (void);//default constructor. lets the player choose his colour
+
+        bool make_move (Game_State* p_game);//returns true if a legal move has just been played. else, returns false
+    //                                  //its important that this function accepts a pointer as its argument, and not he actual class object,
+    //                                  //if it accepted the class itself then a temporay object would be creted of the wrong scope which screws everything up.
+};
+
+
 
 //human functions
 Human::Human(void)//done
