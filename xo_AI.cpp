@@ -1,4 +1,68 @@
 //contains
+class Tree;//prototype declaration
+
+class Computer: public Player //computer is a subclass of player
+{
+    protected:
+        Game_Tree* tree;
+        
+        //TODO: double randomness;//if randomness is non zero, then the computer will sometimes pick non optimal moves
+    public:
+        Computer(char player_colour, bool playergoesfirst):  tree(playergoesfirst); //will construct the computer object to play as the opposite colour. Also call the game_tree constructor.
+        bool make_move (Game_State* p_game);//changes the object passed to it to reflect the new board state
+        
+};
+
+class Human: public Player //human is a subclass of player
+{
+    public:
+        Human (void);//default constructor. lets the player choose his colour
+
+        bool make_move (Game_State* p_game);//returns true if a legal move has just been played. else, returns false
+    //                                  //its important that this function accepts a pointer as its argument, and not he actual class object,
+    //                                  //if it accepted the class itself then a temporay object would be creted of the wrong scope which screws everything up.
+};
+
+class Tree_Node
+{
+    protected:
+       Game_state* state, temp;
+  
+
+       //bool max_or_min; //true if this node is a maximum of the previous nodes.
+       double value; //+10 for victory from this node, -10 if this node causes loss.
+                            //eventually i plan to a wider variety of numbers here.
+      
+       int depth; //0 for top level nodes, all the way down to 8 for terminating nodes.
+
+       //At each ply, there are potentially up to 8 different ways the game can develop
+       Tree_Node leaves [8]; //array of pointers to the potentially up to 8 different game leafs that are below this game leaf.
+                                    //some of the pointers might be NULL if moves cannot be played there
+
+    public:
+        Tree_Node(Tree_Node* current_leaf,  game_state* p_game); //constructor. second argument is an array of pointers to the lower down nodes
+        Tree_Node(Tree_Node* current_leaf, game_state* p_game, int value); //constructor for a terminating node.
+
+        double get_node_value(void);
+        Tree_node* get_lower_node (int i);//returns leaves[i]
+        
+        //double get_next_node(int depth);//returns a rarandom leaf at 
+};
+class Tree//will store the best possible move at each node
+{
+        Tree_Node* head;//pointer to the first leaf in the game tree
+        Tree_Node* current_leaf;//iterator
+        bool playergoesfirst;//true if player is X, false if computer is X
+        //int minimax (bool maximising);//used in constructing the game tree.
+   public:
+        Game_Tree(Game_State* p_game, bool pgoesfirst); //constructor. 
+        
+        double get_next_node(int depth, int i);//returns the next node at a given depth.
+  
+        //Game_Leaf* picknextmove(double randomness);//returns the next play the computer should make
+                                                    //if randomness is non zero, then the computer will sometimes pick non optimal moves
+};
+
 
 
 Tree::Tree( Game_state* p_game, bool pgoesfirst)//constructor
