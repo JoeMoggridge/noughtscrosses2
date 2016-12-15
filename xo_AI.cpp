@@ -13,15 +13,6 @@ class Computer: public Player //computer is a subclass of player
         
 };
 
-class Human: public Player //human is a subclass of player
-{
-    public:
-        Human (void);//default constructor. lets the player choose his colour
-
-        bool make_move (Game_State* p_game);//returns true if a legal move has just been played. else, returns false
-    //                                  //its important that this function accepts a pointer as its argument, and not he actual class object,
-    //                                  //if it accepted the class itself then a temporay object would be creted of the wrong scope which screws everything up.
-};
 
 class Tree_Node
 {
@@ -40,8 +31,9 @@ class Tree_Node
                                     //some of the pointers might be NULL if moves cannot be played there
 
     public:
-        Tree_Node(Tree_Node* current_leaf,  game_state* p_game); //constructor. second argument is an array of pointers to the lower down nodes
-        Tree_Node(Tree_Node* current_leaf, game_state* p_game, int value); //constructor for a terminating node.
+        Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize, bool pgoesfirst); //constructor. second argument is an array of pointers to the lower down nodes
+        
+    //Tree_Node(Tree_Node* current_leaf, game_state* p_game, int value); //constructor for a terminating node.
 
         double get_node_value(void);
         Tree_node* get_lower_node (int i);//returns leaves[i]
@@ -71,156 +63,118 @@ Tree::Tree( Game_state* p_game, bool pgoesfirst)//constructor
     playergoesfirst=pgoesfirst;
 
     //recursively builds the tree:
-    head= Tree_Node(current_leaf, p_game);
+    head= Tree_Node(current_leaf, p_game, true, pgoesfirst);
 }
 
-Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize)
+Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize, bool pgoesfirst)
 //constructor. 
  {
-    bool maximize; 
     
-    if (current_leaf= NULL)
-    {
-        //initial call. construct the head node.
-        *state = *p_game; //PROBLEM i need to redefine the copy operator for class Game_State. 
+    depth= p_game->depth;
+    
+    //create some variable that will be used in vcalcualting the node value
+    int win_value=1;//this is the wieght that will be assigned for a win
+    double scale=0.1;
+    
+    int index=1;
+    
+    //we can work out what colour the curerent player is by considering the fact that X alwatys plays first, 
+    //and the computer will always be trying to maximize
+    char colour;
+    if (maximize== pgoesfirst)
+        colour= 'O';
+    else
+        colour= 'X';
+    
+    
+    *state = *p_game; //PROBLEM i need to redefine the copy operator for class Game_State. 
                         //at the moment we're simply equating the pointers, which is not enough.
-        *temp= *state;
-        
+    *temp= *state;
+    
+    if (current_leaf= NULL)//this is the initial call. construct the head node.
+    {
+               
         double best_value =0, test_value;
         if (maximize==true)
         {
             for (int i=0; i<9 i++)
             {
-                if( temp.make_move(i)==true);
+                best_value=0;
+                if( temp.make_move(colour, i)==true);//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
-                    leaves[i]= Tree_Node(leaves[i], temp, !maximize);//construct the next level down of leaves
-                    test_value= leaves[i]->value ;
+                    leaves[i]= Tree_Node(this, temp, !maximize, pgoesfirst);//construct the next level down of leaves
+                    test_value= leaves[i]->value;
+
+                    //seacrh for the best node from the next level down
+                    //TODO make the upper node a more complicated combination of the lower nodes
                     if (maximize==true)
-                           best_value= max(test_value, best_value);
+                        best_value= max(test_value, best_value);
                     else if (maximize==false)
                         best_value= min(test_value, best_value);
                 }
                 else //not an allowed move
                     leaves[i]= NULL;
             }
-            node_value = best_value;
-        }
-         
-                
-            
-        node_value= max(all sub nodes)
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    double best_value=0;
-    double V;
-    Game_Leaf* trial_leaf, next_leaf;
-    const double INF= std::numeric_limits<float>::infinity();
-    bool maximizing= !pgoesfirst;
-    int win_value= 10 ;//defines the weight associated with a win
-    int index, depth=0; //used to cut down the number of if satements
-    double weighting; //defines how the weight of a previous node is determined based on the lower node    
-           //base case
-    if (depth > 8 || p_game->victory()!= ' ')//'if (this is a terminating node)'
-    {
-        
-
-            //these next two if statements are used to make sure maximum and minimums are correctly assigned.
-            if (playergoesfirst==true)
-                index =1;
-            else /*playergoesfirst=false*/
-                index=0;
-
-            if (trial_leaf->p_game->victory()=='X') //x win
-            {
-                trial_leaf= Tree_Node(trial_leaf->p_game, win_value*pow(-1, index));
-            }
-            else if (trial_leaf->p_game->victory()=='O' )   //o win
-                trial_leaf= Tree_Node(trial_leaf->p_game, win_value*pow(-1, index+1));
-            else    //draw
-                trial_leaf=Tree_Node(trial_leaf->p_game, 0);
-            
-       
-        
-        
-    }
-    //else recursive
-    else
-    {
-        for (int i=0; i<(9-depth) ; i++)
-        {
-                 current_leaf = Tree_Node(p_game, Current )
-                
-
-         }
-    }
-    
-    //asisgn the head leaf
-    /*
-    for (int depth=0; depth<8; depth++)
-    {//loop throught the entire tree, generate the tree.
-        
-        if (maximizing==true)
-            best_value = −INF;
-        else /* minimizing player*/
-         /*   best_value = INF;
-        
-        
-        }
-        
-        maximizing= !maximizing;
-        
-    }
-    
-    /*
-    if (depth > 8 || p_game->victory()!= ' ')//'if (this is a terminating node)'
-    {
-        int index=0;//this is used to change the sign of the terminating nodes, depending on whehter a victory for X is good or bad
-        if (player goesfirst==true)
-            index=1;
-        
-        if (p_game->victory()=='X' && playergoesfirst== true)
-                this.current_leaf->node_value= 10*pow(-1, index);
-        else if (p_game->victory()=='O')
-                this.current_leaf->node_value= 10*pow(-1, index+1);
+            value = best_value;//assign this nodes value
         }
     }
-         return node.get_node_value();
-         
-    
-    */
+    else if (p_game->victory()!= ' ' || depth> 8 )//base case. This is a terminating node.
+    {
+        //set all the sub nodes to NULL
+        for (int i=0; i<9 i++)
+            leaves[i]=NULL;
         
- }
+        //set the value of this terminating node depending on who has won
+        if (maximize==true);
+           index++; 
+        if (p_game->victory()== 'X')
+           value= win_value*pow(-1, index);
+        if (p_game->victory()== 'O')
+           value= win_value*pow(-1, index+1);
         
-Tree_Node(Tree_Node* current_leaf, game_state* p_game, int value);
- {
-            
-}
+        
+    }
+    else //general recursive case. construct this node by calling the next node
+    {
+         double best_value, test_value, accumulator=0;
+         for (int i=0; i<9 ; i++)
+          {
+                best_value=0, accumulator=0;;
+                if( temp.make_move(colour, i)==true);//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
+                {
+                    leaves[i]= Tree_Node(this, temp, !maximize, pgoesfirst);//construct the next level down of leaves
+                    test_value= leaves[i]->value ;
+
+                    
+                    //assign a value to this node based on a sum of the lower nodes
+                    //TODO this might be a stupid way of assigning value. 
+                    //for example, the minimax algorithm just picks the biggest/smallest at each level.
+                    //maybe it would make more sense to assign greater weight to nodes that cause victory at a smaller depth.
+                    if (maximize==true)
+                        accumulator+= test_value*scale;
+                    else if (maximize==false)
+                        accumulator-= test_value*scale;
+                }
+                else //not an allowed move
+                    leaves[i]= NULL;
+           }
+           value=accumulator;
+    }
+}       
 
 //computer fuctions
 void Computer::make_move(Game_State* p_game)
 {
-    
 
-    minimax(tree.head, 0, TRUE )
-    
-    /*
     int position=-1;
-    double max=0;
+    double max=0;//play the move that maximizes this value
     game_leaf* trial_leaf= NULL;
     do//loop through searching for moves until a move is found that can be played.
     {
         //1) search the game tree for the best move
         for (int i=0; i<9 ;i++)
         {
-            trial_leaf = tree.current_leaf->get_next_leaf (i);
+            trial_leaf = tree.current_leaf->get_next_node (tree.curent_leaf->depth, i);
             
             if (trial_leaf.get_node_value()> max)
             {
@@ -230,7 +184,7 @@ void Computer::make_move(Game_State* p_game)
         }
         
     } while (p_game->make_move(computer.get_colour(), position) == false);
-    */
+    
 
 }
 
