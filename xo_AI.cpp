@@ -74,7 +74,7 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize
     
     //create some variables that will be used in calcualting the node value
     int win_value=1;//this is the wieght that will be assigned for a win
-    double scale=0.1;
+    double best_value=0, test_value;
     
     int index=1;
     
@@ -86,16 +86,13 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize
     else
         colour= 'X';
     
-    
-    *state = *p_game; //PROBLEM i need to redefine the copy operator for class Game_State. 
-                        //at the moment we're simply equating the pointers, which is not enough.
+    //copy the input game state into this class.
+    //note that i have written a cutom copy operator in xo_functions.cpp 
+    *state = *p_game; 
     *temp= *state;
     
     if (current_leaf= NULL)//if this conditoin is met, then this is the head node. construct the head node.
     {
-               
-        double best_value =0, test_value;
-        
             for (int i=0; i<9 i++)
             {
                 best_value=0;
@@ -135,10 +132,9 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize
     }
     else //general recursive case. construct this node by calling the next node
     {
-         double best_value, test_value ;
          for (int i=0; i<9 ; i++)
           {
-                best_value=0, accumulator=0;;
+                
                 if( temp.make_move(colour, i)==true);//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
                     leaves[i]= Tree_Node(this, temp, !maximize, pgoesfirst);//construct the next level down of leaves
@@ -162,11 +158,11 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize
 void Computer::make_move(Game_State* p_game)
 {
 
-    int position=-1;
+    int position=-1;//initially set the move-to-make to a dissallowed value.
     
     double max=0;//play the move that maximizes this value
     game_leaf* trial_leaf= NULL;
-    bool test=false;
+    
   
     //loop through searching for moves until a move is found that can be played.
     do
@@ -175,11 +171,11 @@ void Computer::make_move(Game_State* p_game)
         for (int i=0; i<9 ; i++)
         {
             trial_leaf = tree.current_leaf->get_node (tree.curent_leaf->depth+1, i);
-            
-      
+            //if a move in position i is a disslowed move, then trial_leaf will be assigned a value of NULL. 
+                 
             if (trial_leaf!= NULL) //check that its an allowed move
              {
-                 if (trial_leaf.get_node_value()> max)//check whether its a good move
+                 if (trial_leaf.get_node_value()> max)//is this move better than all the other moves found so far?
                  {
                     max= trial_leaf.get_node_value();//it is the best move found so far
                     position= i;
@@ -208,7 +204,7 @@ Computer::Computer(Game_state* p_game, char player_colour, bool playergoesfirst)
         getline(cin, input);
         exit (1);
     
-    //note that the Tee constructor is allso called (check the prototype declaration to see this call)
+    //note that the Tree constructor is allso called (check the prototype declaration to see this call)
     
 }
 
