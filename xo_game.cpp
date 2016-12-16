@@ -6,6 +6,8 @@ class Game_State
     int game_turn;
 public:
     Game_State (void); //default constructor
+    Game_state (const Game_state &obj) ;//this is a custom copy constructor, the default copy constructor does not fit my needs.
+
     void draw_board (void);
     bool make_move (char player_colour, int position);//returns true, and updates the game state if 'position' is a legal move. else, returns false
     char victory (void);//returns X if X has won, O if O has won. else returns ' '.
@@ -29,6 +31,14 @@ Game_State::Game_State (void)//constructor. done
 
     for (int i=0; i<9; i++)
         board [i]=' ';
+}
+ Game_state (const Game_state &input) //copy constructor
+{
+    game_turn= input.game_turn;
+
+    for (int i=0; i<9; i++)
+        board [i]=input.board[i];
+     
 }
 void Game_State::draw_board (void)//prints the current game to the screen. done
 {
