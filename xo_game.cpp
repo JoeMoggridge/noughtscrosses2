@@ -1,28 +1,3 @@
-void instructions(void);//prints instruction on how to play to std::out
-
-class Game_State
-{
-    char board[9];// board is numbered from 0 to 8.
-    int game_turn;
-public:
-    Game_State (void); //default constructor
-    Game_state (const Game_state &obj) ;//this is a custom copy constructor, the default copy constructor does not fit my needs.
-
-    void draw_board (void);
-    bool make_move (char player_colour, int position);//returns true, and updates the game state if 'position' is a legal move. else, returns false
-    char victory (void);//returns X if X has won, O if O has won. else returns ' '.
-
-};
-
-class Player //abstract class
-{
-protected:
-    char colour;
-public:
-    char get_colour(void);
-    virtual bool make_move(Game_State* p_game) =0;//virtual function because "=0"
-};
-
 
 //Game_State functions
 Game_State::Game_State (void)//constructor. done
@@ -38,7 +13,7 @@ Game_State::Game_State (void)//constructor. done
 
     for (int i=0; i<9; i++)
         board [i]=input.board[i];
-     
+
 }
 void Game_State::draw_board (void)//prints the current game to the screen. done
 {
