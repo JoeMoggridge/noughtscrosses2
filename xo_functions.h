@@ -24,7 +24,7 @@ public:
     void draw_board (void);
     bool make_move (char player_colour, int position);//returns true, and updates the game state if 'position' is a legal move. else, returns false
     char victory (void);//returns X if X has won, O if O has won. else returns ' '.
-
+    int get_turn(void);
 };
 
 class Player //abstract class
@@ -43,7 +43,7 @@ public:
 class Tree_Node
 {
     protected:
-       Game_State* state, temp;
+       Game_State state, temp;
 
 
        //bool max_or_min; //true if this node is a maximum of the previous nodes.
@@ -70,13 +70,16 @@ class Tree_Node
 class Tree//will store the best possible move at each node
 {
         Tree_Node* head;//pointer to the first leaf in the game tree
-        Tree_Node* current_leaf;//iterator
+
         bool playergoesfirst;//true if player is X, false if computer is X
         //int minimax (bool maximising);//used in constructing the game tree.
    public:
+
         Tree(Game_State* p_game, bool pgoesfirst); //constructor.
 
-        double get_node(int depth, int i);//returns the next node at a given depth.
+        Tree_Node* current_leaf;//iterator
+        Tree_Node* get_node(int i);//returns a pointer to the next node after the current_leaf
+
 
         //Game_Leaf* picknextmove(double randomness);//returns the next play the computer should make
                                                     //if randomness is non zero, then the computer will sometimes pick non optimal moves
@@ -88,7 +91,8 @@ class Computer: public Player //computer is a subclass of player
         char colour;
         double randomness;//if randomness is non zero, then the computer will sometimes pick non optimal moves
     public:
-        Computer(Game_State* p_game, char player_colour, bool playergoesfirst):  tree(p_game, playergoesfirst); //will construct the computer object to play as the opposite colour. Also call the game_tree constructor.
+        Computer(Game_State* p_game, char player_colour, bool playergoesfirst)  ; //will construct the computer object to play as the opposite colour. Also call the game_tree constructor.
+        Computer ()= default; //default constructor
         bool make_move (Game_State* p_game);//changes the object passed to it to reflect the new board state
 
 };

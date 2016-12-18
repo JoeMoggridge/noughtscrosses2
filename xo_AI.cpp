@@ -1,5 +1,8 @@
 
 
+#include "xo_functions.h"
+#include <algorithm> // needed for calls to max()
+using namespace std;
 
 Tree::Tree( Game_state* p_game, bool pgoesfirst)//constructor
 {
@@ -9,12 +12,27 @@ Tree::Tree( Game_state* p_game, bool pgoesfirst)//constructor
     //recursively builds the tree:
     head= Tree_Node(current_leaf, p_game, true, pgoesfirst);
 }
+Tree_Node* Tree::get_node( int i)
+{
 
-Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize, bool pgoesfirst)
+       return current_leaf->get_lower_node(i);
+}
+
+ Tree_Node* Tree_Node::get_lower_node (int i)//returns leaves[i]
+ {
+     if (i<0 || i>8)
+     {
+         return NULL;
+     }
+     else
+        return this->leaves[i];
+ }
+
+Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize, bool pgoesfirst)
 //constructor.
  {
 
-    depth= p_game->depth;
+    depth= p_game->get_turn();
 
     //create some variables that will be used in calcualting the node value
     int win_value=1;//this is the wieght that will be assigned for a win
@@ -32,17 +50,19 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize
 
     //copy the input game state into this class.
     //note that i have written a cutom copy operator in xo_functions.cpp
-    *state = *p_game;
-    *temp= *state;
+    state = *p_game;
+    temp= state;
 
-    if (current_leaf= NULL)//if this conditoin is met, then this is the head node. construct the head node.
+    if (current_leaf == (Tree_Node*) NULL)//if this conditoin is met, then this is the head node. construct the head node.
     {
-            for (int i=0; i<9 i++)
+            for (int i=0; i<9; i++)
             {
                 best_value=0;
-                if( temp.make_move(colour, i)==true);//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
+                if( temp.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
-                    leaves[i]= Tree_Node(this, temp, !maximize, pgoesfirst);//construct the next level down of leaves
+
+                    *leaves[i]= Tree_Node(this, &temp, !maximize, pgoesfirst);//construct the next level down of leaves
+                                                                            //PROBLEM the object that leaves[i] is now poining at will be destructed as soon as we exit this loop
                     test_value= leaves[i]->value;
 
                     //seacrh for the best node from the next level down
@@ -61,11 +81,11 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize
     else if (p_game->victory()!= ' ' || depth> 8 )//base case. This is a terminating node.
     {
         //set all the sub nodes to NULL
-        for (int i=0; i<9 i++)
+        for (int i=0; i<9;i++)
             leaves[i]=NULL;
 
         //set the value of this terminating node depending on who has won
-        if (maximize==true);
+        if (maximize==true)
            index++;
         if (p_game->victory()== 'X')
            value= win_value*pow(-1, index);
@@ -79,9 +99,9 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize
          for (int i=0; i<9 ; i++)
           {
 
-                if( temp.make_move(colour, i)==true);//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
+                if ( temp.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
-                    leaves[i]= Tree_Node(this, temp, !maximize, pgoesfirst);//construct the next level down of leaves
+                    *leaves[i]= Tree_Node(this, &temp, !maximize, pgoesfirst);//construct the next level down of leaves
                     test_value= leaves[i]->value ;
 
 
@@ -94,45 +114,13 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  game_state* p_game, bool maximize
                 else //not an allowed move
                     leaves[i]= NULL;
            }
-           value=accumulator;
+           value=best_value;
     }
 }
 
-//computer fuctions
-void Computer::make_move(Game_State* p_game)
-{
 
-    int position=-1;//initially set the move-to-make to a dissallowed value.
-
-    double max=0;//play the move that maximizes this value
-    game_leaf* trial_leaf= NULL;
-
-
-    //loop through searching for moves until a move is found that can be played.
-    do
-    {
-        //search the game tree for the best move
-        for (int i=0; i<9 ; i++)
-        {
-            trial_leaf = tree.current_leaf->get_node (tree.curent_leaf->depth+1, i);
-            //if a move in position i is a disslowed move, then trial_leaf will be assigned a value of NULL.
-
-            if (trial_leaf!= NULL) //check that its an allowed move
-             {
-                 if (trial_leaf.get_node_value()> max)//is this move better than all the other moves found so far?
-                 {
-                    max= trial_leaf.get_node_value();//it is the best move found so far
-                    position= i;
-                 }
-             }
-        }
-
-    }while (p_game->make_move(computer.get_colour(), position) == false)
-
-}
-
-
-Computer::Computer(Game_state* p_game, char player_colour, bool playergoesfirst)//default constructor
+Computer::Computer (Game_state* p_game, char player_colour, bool playergoesfirst)//default constructor
+: tree (p_game, playergoesfirst)
 {
 
     if (player_colour=='X')
@@ -151,4 +139,41 @@ Computer::Computer(Game_state* p_game, char player_colour, bool playergoesfirst)
     //note that the Tree constructor is allso called (check the prototype declaration to see this call)
 
 }
+
+
+
+//computer fuctions
+bool Computer::make_move(Game_State* p_game)
+{
+
+    int position=-1;//initially set the move-to-make to a dissallowed value.
+
+    double max=0;//play the move that maximizes this value
+    Tree_Node* trial_leaf= NULL;
+
+
+    //loop through searching for moves until a move is found that can be played.
+    do
+    {
+        //search the game tree for the best move
+        for (int i=0; i<9 ; i++)
+        {
+            trial_leaf = tree.current_leaf->get_lower_node ( i);
+            //if a move in position i is a disslowed move, then trial_leaf will be assigned a value of NULL.
+
+            if (trial_leaf!= NULL) //check that its an allowed move
+             {
+                 if (trial_leaf->get_node_value()> max)//is this move better than all the other moves found so far?
+                 {
+                    max= trial_leaf->get_node_value();//it is the best move found so far
+                    position= i;
+                 }
+             }
+        }
+
+    }while (p_game->make_move(this->get_colour(), position) == false);
+
+    return true;
+}
+
 

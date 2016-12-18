@@ -1,3 +1,5 @@
+#include "xo_functions.h"
+
 
 Human::Human(void)//done
 {

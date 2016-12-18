@@ -1,3 +1,5 @@
+#include xo_functions.h
+
 
 //Game_State functions
 Game_State::Game_State (void)//constructor. done
@@ -80,6 +82,11 @@ char Game_State::victory (void)//check whether X or O has won.
     }
     //else, if no victory position is found, return false
     return (' ');
+}
+
+int Game_State::get_turn(void)
+{
+    return game_turn;
 }
 
 //player functions

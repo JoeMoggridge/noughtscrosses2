@@ -19,7 +19,7 @@
 #include <string.h>
 #include <windows.h>//needed for call to "exit()"
 #include <math.h>
-#include "../noughtscrosses2/xo_functions.h"//include prototype declarations for class functions.
+#include "xo_functions.h"//include prototype declarations for class functions.
                             //the classes themselves are written in the cpp file of the same name.
 
 using namespace std;
@@ -34,17 +34,18 @@ int main()
 
     Game_State game1;//construct the game
     instructions();//show the instructions
+    bool pgoesfirst=false;
 
     if (player1.get_colour()=='X')//if player is playing x, then he goes first
     {
+        pgoesfirst=true;
+
         player1.make_move(&game1);// we must pass a pointer to the class here, not the actual class
         game1.draw_board();
 
-        Computer computer1(&game1, player1.get_colour() , true); //construct the computer, based on what colour the player is
-                                                    //also constructs the game tree
     }
-    else
-        Computer computer1(&game1, player1.get_colour() , false); //construct the computer, based on what colour the player is
+
+    Computer computer1 (&game1, player1.get_colour() , pgoesfirst); //construct the computer, based on what colour the player is
                                                     //also constructs the game tree
 
     do//repeat until someone wins
