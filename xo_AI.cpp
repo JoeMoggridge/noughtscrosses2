@@ -2,15 +2,23 @@
 
 #include "xo_functions.h"
 #include <algorithm> // needed for calls to max()
+#include <stdio.h>
+#include <iostream>
+#include <string.h>
 using namespace std;
+/*
+Tree::Tree()
+{//empty constructor for testing
+    playergoesfirst=true;
+}*/
 
-Tree::Tree( Game_state* p_game, bool pgoesfirst)//constructor
+Tree::Tree (Game_State* p_game, bool pgoesfirst)//constructor
 {
-    curent_leaf= NULL;
+    current_leaf= NULL;
     playergoesfirst=pgoesfirst;
 
     //recursively builds the tree:
-    head= Tree_Node(current_leaf, p_game, true, pgoesfirst);
+    *head= Tree_Node(current_leaf, p_game, true, pgoesfirst);
 }
 Tree_Node* Tree::get_node( int i)
 {
@@ -18,6 +26,10 @@ Tree_Node* Tree::get_node( int i)
        return current_leaf->get_lower_node(i);
 }
 
+double Tree_Node::get_node_value( )
+{
+       return value;
+}
  Tree_Node* Tree_Node::get_lower_node (int i)//returns leaves[i]
  {
      if (i<0 || i>8)
@@ -51,12 +63,13 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
     //copy the input game state into this class.
     //note that i have written a cutom copy operator in xo_functions.cpp
     state = *p_game;
-    temp= state;
+
 
     if (current_leaf == (Tree_Node*) NULL)//if this conditoin is met, then this is the head node. construct the head node.
     {
             for (int i=0; i<9; i++)
             {
+                temp= state;
                 best_value=0;
                 if( temp.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
@@ -68,9 +81,9 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
                     //seacrh for the best node from the next level down
                     //TODO make the upper node a more complicated combination of the lower nodes
                     if (maximize==true)
-                        best_value= max(test_value, best_value);
+                        best_value= std::max(test_value, best_value);
                     else if (maximize==false)
-                        best_value= min(test_value, best_value);
+                        best_value= std::min(test_value, best_value);
                 }
                 else //not an allowed move
                     leaves[i]= NULL;
@@ -83,6 +96,8 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
         //set all the sub nodes to NULL
         for (int i=0; i<9;i++)
             leaves[i]=NULL;
+
+        state= *p_game;
 
         //set the value of this terminating node depending on who has won
         if (maximize==true)
@@ -98,6 +113,7 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
     {
          for (int i=0; i<9 ; i++)
           {
+                temp= state;
 
                 if ( temp.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
@@ -107,9 +123,9 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
 
                     //assign a value to this node using minmax  algorithm
                     if (maximize==true)
-                        best_value= max( test_value, best_value);
+                        best_value= std::max( test_value, best_value);
                     else /*(maximize==false)*/
-                        best_value= min( test_value, best_value);
+                        best_value= std::min( test_value, best_value);
                 }
                 else //not an allowed move
                     leaves[i]= NULL;
@@ -119,9 +135,10 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
 }
 
 
-Computer::Computer (Game_state* p_game, char player_colour, bool playergoesfirst)//default constructor
+Computer::Computer (Game_State* p_game, char player_colour, bool playergoesfirst)// constructor
 : tree (p_game, playergoesfirst)
 {
+
 
     if (player_colour=='X')
         colour= 'O';

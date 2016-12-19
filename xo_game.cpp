@@ -1,5 +1,8 @@
-#include xo_functions.h
+#include "xo_functions.h"
+#include <stdio.h>
+#include <iostream>
 
+using namespace std;
 
 //Game_State functions
 Game_State::Game_State (void)//constructor. done
@@ -9,7 +12,8 @@ Game_State::Game_State (void)//constructor. done
     for (int i=0; i<9; i++)
         board [i]=' ';
 }
- Game_state (const Game_state &input) //copy constructor
+
+Game_State::Game_State (const Game_State& input) //copy constructor
 {
     game_turn= input.game_turn;
 

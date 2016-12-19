@@ -1,5 +1,9 @@
 #include "xo_functions.h"
-
+#include <stdio.h>
+#include <iostream>
+#include <string.h>
+#include <windows.h>
+using namespace std;
 
 Human::Human(void)//done
 {

@@ -19,7 +19,7 @@ class Game_State
     int game_turn;
 public:
     Game_State (void); //default constructor
-    Game_State (const Game_State &obj) ;//this is a custom copy constructor, the default copy constructor does not fit my needs.
+    Game_State (const Game_State& input) ;//this is a custom copy constructor, the default copy constructor does not fit my needs.
 
     void draw_board (void);
     bool make_move (char player_colour, int position);//returns true, and updates the game state if 'position' is a legal move. else, returns false
@@ -74,6 +74,7 @@ class Tree//will store the best possible move at each node
         bool playergoesfirst;//true if player is X, false if computer is X
         //int minimax (bool maximising);//used in constructing the game tree.
    public:
+       //Tree(void); //empty constructor for testing
 
         Tree(Game_State* p_game, bool pgoesfirst); //constructor.
 
