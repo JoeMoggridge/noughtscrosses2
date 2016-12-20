@@ -58,8 +58,8 @@ class Tree_Node
 
     public:
         Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize, bool pgoesfirst); //constructor. second argument is an array of pointers to the lower down nodes
-
-    //Tree_Node(Tree_Node* current_leaf, game_state* p_game, int value); //constructor for a terminating node.
+        Tree_Node(); //empty constructor for making temporary tree_node objects
+        Tree_Node(const Tree_Node& input) ;//copy constructor
 
         double get_node_value(void);
         Tree_Node* get_lower_node (int i);//returns leaves[i]
@@ -73,6 +73,8 @@ class Tree//will store the best possible move at each node
 
         bool playergoesfirst;//true if player is X, false if computer is X
         //int minimax (bool maximising);//used in constructing the game tree.
+
+        //TODO add a record here ofhow many nodes there are
    public:
        //Tree(void); //empty constructor for testing
 
