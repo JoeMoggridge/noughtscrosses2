@@ -12,13 +12,24 @@ Tree::Tree()
     playergoesfirst=true;
 }*/
 
+
+//global variables for testing
+int victories=0;
+int nodesatdepth=0;
+//int nodes=0;
+
+//----------------------------
+//Tree stuff
+//-----------------------
 Tree::Tree (Game_State* p_game, bool pgoesfirst)//constructor
 {
     current_leaf= NULL;
     playergoesfirst=pgoesfirst;
+    Tree_Node temp_node;
 
     //recursively builds the tree:
-    *head= Tree_Node(current_leaf, p_game, true, pgoesfirst);
+    temp_node= Tree_Node(current_leaf, p_game, true, pgoesfirst);
+    head= &temp_node;
 }
 Tree_Node* Tree::get_node( int i)
 {
@@ -26,6 +37,9 @@ Tree_Node* Tree::get_node( int i)
        return current_leaf->get_lower_node(i);
 }
 
+//-----------------------------
+//Tree_Node stuff
+//--------------------
 double Tree_Node::get_node_value( )
 {
        return value;
@@ -40,9 +54,29 @@ double Tree_Node::get_node_value( )
         return this->leaves[i];
  }
 
+ Tree_Node::Tree_Node(void) //empty constructor for making temporary tree_node objects
+ {
+     depth=10;
+
+     for (int i=0; i<9; i++)
+        leaves[i]= NULL;
+ }
+
+Tree_Node::Tree_Node(const Tree_Node& input) //copy constructor
+{
+    depth= input.depth;
+    value= input.value;
+    state= input.state;//note that this calls my custom copy operator for game states
+
+    for (int i=0; i<9; i++)
+        leaves[i]= input.leaves[i];
+
+}
+
 Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize, bool pgoesfirst)
 //constructor.
  {
+     Tree_Node temp_node;
 
     depth= p_game->get_turn();
 
@@ -67,15 +101,22 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
 
     if (current_leaf == (Tree_Node*) NULL)//if this conditoin is met, then this is the head node. construct the head node.
     {
-            for (int i=0; i<9; i++)
+        int i=0;
+        nodesatdepth=0;
+            //for (int i=0; i<9; i++)
             {
+
                 temp= state;
                 best_value=0;
                 if( temp.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
 
-                    *leaves[i]= Tree_Node(this, &temp, !maximize, pgoesfirst);//construct the next level down of leaves
+
+                    temp_node= Tree_Node(this, &temp, !maximize, pgoesfirst);//construct the next level down of leaves
                                                                             //PROBLEM the object that leaves[i] is now poining at will be destructed as soon as we exit this loop
+
+                    leaves[i]= &temp_node;
+
                     test_value= leaves[i]->value;
 
                     //seacrh for the best node from the next level down
@@ -93,6 +134,7 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
     }
     else if (p_game->victory()!= ' ' || depth> 8 )//base case. This is a terminating node.
     {
+        victories++;
         //set all the sub nodes to NULL
         for (int i=0; i<9;i++)
             leaves[i]=NULL;
@@ -111,13 +153,23 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
     }
     else //general recursive case. construct this node by calling the next node
     {
+        nodesatdepth++;
+        //nodes=0;
+        //int i=0;
          for (int i=0; i<9 ; i++)
           {
                 temp= state;
-
+                //nodes++;
                 if ( temp.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
-                    *leaves[i]= Tree_Node(this, &temp, !maximize, pgoesfirst);//construct the next level down of leaves
+
+
+
+                    temp_node= Tree_Node(this, &temp, !maximize, pgoesfirst);//construct the next level down of leaves
+                    //Problem: RHS is temporary. so,when i return up the chain, the objects get destructed, and thus i get sigsev.
+
+                     leaves[i]= &temp_node;
+
                     test_value= leaves[i]->value ;
 
 
@@ -147,12 +199,15 @@ Computer::Computer (Game_State* p_game, char player_colour, bool playergoesfirst
         colour= 'X';
 
     else
+    {
+
+
         cout<< "an error has occured, computer could not choose colour."<<endl;
         cout<<"press enter to end the program"<<endl;
         string input;
         getline(cin, input);
         exit (1);
-
+    }
     //note that the Tree constructor is allso called (check the prototype declaration to see this call)
 
 }
