@@ -45,8 +45,8 @@ class Tree_Node
     protected:
        Game_State state, temp;
 
-
        //bool max_or_min; //true if this node is a maximum of the previous nodes.
+    
        double value; //+10 for victory from this node, -10 if this node causes loss.
                             //eventually i plan to a wider variety of numbers here.
 
@@ -55,11 +55,15 @@ class Tree_Node
        //At each ply, there are potentially up to 8 different ways the game can develop
        Tree_Node* leaves [8]; //array of pointers to the potentially up to 8 different game leafs that are below this game leaf.
                                     //some of the pointers might be NULL if moves cannot be played there
+    
+        Prune ();//recursively delete all the pointers below this one
 
     public:
         Tree_Node(Tree* tree, Tree_Node* current_leaf,  Game_State* p_game, bool maximize, bool pgoesfirst); //constructor. second argument is an array of pointers to the lower down nodes
         Tree_Node(); //empty constructor for making temporary tree_node objects
         Tree_Node(const Tree_Node& input) ;//copy constructor
+    
+    
 
         double get_node_value(void);
         Tree_Node* get_lower_node (int i);//returns leaves[i]
@@ -76,13 +80,15 @@ class Tree//will store the best possible move at each node
         
         int array[9];//this will store how many nodes there are at each depth. 
                     //eg, at depth=0, there should be 9 nodes; and at depth=1, there should be 9*8=72 nodes
+    
        
+    
    public:
        //Tree(void); //empty constructor for testing
 
         Tree(Game_State* p_game, bool pgoesfirst); //constructor.
     
-        ~Tree();//this destructor cals the delete function for all the pointers
+        ~Tree();//this destructor calls head->Delete_Node(this) 
 
         Tree_Node* current_leaf;//iterator
         Tree_Node* get_node(int i);//returns a pointer to the next node after the current_leaf
