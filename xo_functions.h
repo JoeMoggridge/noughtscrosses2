@@ -57,7 +57,7 @@ class Tree_Node
                                     //some of the pointers might be NULL if moves cannot be played there
 
     public:
-        Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize, bool pgoesfirst); //constructor. second argument is an array of pointers to the lower down nodes
+        Tree_Node(Tree* tree, Tree_Node* current_leaf,  Game_State* p_game, bool maximize, bool pgoesfirst); //constructor. second argument is an array of pointers to the lower down nodes
         Tree_Node(); //empty constructor for making temporary tree_node objects
         Tree_Node(const Tree_Node& input) ;//copy constructor
 
@@ -73,12 +73,16 @@ class Tree//will store the best possible move at each node
 
         bool playergoesfirst;//true if player is X, false if computer is X
         //int minimax (bool maximising);//used in constructing the game tree.
-
-        //TODO add a record here ofhow many nodes there are
+        
+        int array[9];//this will store how many nodes there are at each depth. 
+                    //eg, at depth=0, there should be 9 nodes; and at depth=1, there should be 9*8=72 nodes
+       
    public:
        //Tree(void); //empty constructor for testing
 
         Tree(Game_State* p_game, bool pgoesfirst); //constructor.
+    
+        ~Tree();//this destructor cals the delete function for all the pointers
 
         Tree_Node* current_leaf;//iterator
         Tree_Node* get_node(int i);//returns a pointer to the next node after the current_leaf
@@ -87,6 +91,9 @@ class Tree//will store the best possible move at each node
         //Game_Leaf* picknextmove(double randomness);//returns the next play the computer should make
                                                     //if randomness is non zero, then the computer will sometimes pick non optimal moves
 };
+
+
+
 class Computer: public Player //computer is a subclass of player
 {
     protected:
