@@ -13,10 +13,6 @@ Tree::Tree()
 }*/
 
 
-//global variables for testing
-int victories=0;
-int nodesatdepth=0;
-//int nodes=0;
 
 //----------------------------
 //Tree stuff
@@ -26,16 +22,26 @@ Tree::Tree (Game_State* p_game, bool pgoesfirst)//constructor
     current_leaf= NULL;
     playergoesfirst=pgoesfirst;
     Tree_Node temp_node;
-
+    
+    for (int i=0; i<9; i++)
+        array[i]= 0;
+    
     //recursively builds the tree:
-    temp_node= Tree_Node(current_leaf, p_game, true, pgoesfirst);
+    temp_node= Tree_Node(this, current_leaf, p_game, true, pgoesfirst);
     head= &temp_node;
 }
+
 Tree_Node* Tree::get_node( int i)
 {
 
        return current_leaf->get_lower_node(i);
 }
+
+Tree::~Tree()
+{
+       head->Prune ();
+}
+
 
 //-----------------------------
 //Tree_Node stuff
@@ -53,6 +59,15 @@ double Tree_Node::get_node_value( )
      else
         return this->leaves[i];
  }
+
+void Tree_Node::Prune()
+{
+    for (int i=0; i<9; i++)
+       leaves[i] -> Prune ();
+        
+    delete this;
+}
+
 
  Tree_Node::Tree_Node(void) //empty constructor for making temporary tree_node objects
  {
@@ -73,7 +88,7 @@ Tree_Node::Tree_Node(const Tree_Node& input) //copy constructor
 
 }
 
-Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize, bool pgoesfirst)
+Tree_Node::Tree_Node(Tree* tree, Tree_Node* current_leaf,  Game_State* p_game, bool maximize, bool pgoesfirst)
 //constructor.
  {
      Tree_Node temp_node;
@@ -102,18 +117,17 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
     if (current_leaf == (Tree_Node*) NULL)//if this conditoin is met, then this is the head node. construct the head node.
     {
         int i=0;
-        nodesatdepth=0;
+        
             //for (int i=0; i<9; i++)
             {
+                tree.array[0]++;
 
                 temp= state;
                 best_value=0;
                 if( temp.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
 
-
-                    temp_node= Tree_Node(this, &temp, !maximize, pgoesfirst);//construct the next level down of leaves
-                                                                            //PROBLEM the object that leaves[i] is now poining at will be destructed as soon as we exit this loop
+                    temp_node= new Tree_Node(tree, this, &temp, !maximize, pgoesfirst);//construct the next level down of leave                                                 
 
                     leaves[i]= &temp_node;
 
@@ -134,7 +148,8 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
     }
     else if (p_game->victory()!= ' ' || depth> 8 )//base case. This is a terminating node.
     {
-        victories++;
+        tree->array[depth]++; 
+        
         //set all the sub nodes to NULL
         for (int i=0; i<9;i++)
             leaves[i]=NULL;
@@ -153,6 +168,8 @@ Tree_Node::Tree_Node(Tree_Node* current_leaf,  Game_State* p_game, bool maximize
     }
     else //general recursive case. construct this node by calling the next node
     {
+        tree->array[depth]++;
+        
         nodesatdepth++;
         //nodes=0;
         //int i=0;
