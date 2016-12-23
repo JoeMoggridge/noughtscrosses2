@@ -1,21 +1,25 @@
-#include "xo_functions.h"
+#include "xo_classes.h"
 #include <stdio.h>
 #include <iostream>
 
 using namespace std;
 
+//------------------
 //Game_State functions
-Game_State::Game_State (void)//constructor. done
+//------------------------
+Game_State::Game_State (bool playerfirst)//constructor. done
 {
     game_turn=0;
+    first= playerfirst;
 
     for (int i=0; i<9; i++)
         board [i]=' ';
 }
 
-Game_State::Game_State (const Game_State& input) //copy constructor
+Game_State::Game_State ( Game_State& input) //copy constructor
 {
     game_turn= input.game_turn;
+    first= input.goes_first();
 
     for (int i=0; i<9; i++)
         board [i]=input.board[i];
@@ -49,7 +53,7 @@ void Game_State::draw_board (void)//prints the current game to the screen. done
 
     }
 }
-bool Game_State::make_move (char player_colour, int position)//done
+bool Game_State::make_move (char player_colour, int position)
 {
     if (board[position]==' ')
     {
@@ -87,20 +91,26 @@ char Game_State::victory (void)//check whether X or O has won.
     //else, if no victory position is found, return false
     return (' ');
 }
-
+bool Game_State::goes_first()
+{
+    return first;
+}
 int Game_State::get_turn(void)
 {
     return game_turn;
 }
 
+//-------------------------
 //player functions
+//------------------------
 char Player::get_colour()
 {
     return colour;
 }
 
-
+//------------------------------
 //other functions
+//----------------------------------
 void instructions(void)//done
 {
     cout<< "when asked to make a play, enter a number between zero and 8."<<endl<<endl;

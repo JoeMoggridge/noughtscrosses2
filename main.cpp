@@ -19,8 +19,8 @@
 #include <string.h>
 #include <windows.h>//needed for call to "exit()"
 #include <math.h>
-#include "xo_functions.h"//include prototype declarations for class functions.
-                            //the classes themselves are written in the cpp file of the same name.
+#include "xo_classes.h"//include prototype declarations for class functions.
+                            //the classes themselves are written in other .cpp files
 
 using namespace std;
 
@@ -31,21 +31,23 @@ int main()
 
     Human player1;//construct the player. user will be asked what colour they want to play.
 
-
-    Game_State game1;//construct the game
+    Game_State game1(false);//construct the game
     instructions();//show the instructions
-    bool pgoesfirst=false;
+
 
     if (player1.get_colour()=='X')//if player is playing x, then he goes first
     {
-        pgoesfirst=true;
+        Game_State temp(true);
+        game1=temp;//custom copy the temp object into the game1 object.
+                    //I cant simply construct the object within this if statement, because it will go out of scope.
+                    //v annoying.
 
         player1.make_move(&game1);// we must pass a pointer to the class here, not the actual class
         game1.draw_board();
 
     }
 
-    Computer computer1 (&game1, player1.get_colour() , pgoesfirst); //construct the computer, based on what colour the player is
+    Computer computer1 (&game1 /* ,double randomness */ ); //construct the computer, based on what colour the player is
                                                     //also constructs the game tree
 
     do//repeat until someone wins
