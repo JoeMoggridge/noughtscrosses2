@@ -16,10 +16,19 @@ Game_State::Game_State (bool playerfirst)//constructor. done
         board [i]=' ';
 }
 
-Game_State::Game_State ( Game_State& input) //copy constructor
+Game_State::Game_State (void)//default constructor used for making temporary tree objects
+{
+    game_turn=10;
+    first= false;
+
+    for (int i=0; i<9; i++)
+        board [i]=' ';
+}
+
+Game_State::Game_State (const Game_State& input) //copy constructor
 {
     game_turn= input.game_turn;
-    first= input.goes_first();
+    first= input.first;
 
     for (int i=0; i<9; i++)
         board [i]=input.board[i];

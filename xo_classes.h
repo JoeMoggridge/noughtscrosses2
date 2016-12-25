@@ -20,8 +20,9 @@ class Game_State
     int game_turn;
     bool first;//true if the player goes first, false if the computer goes first
 public:
-    Game_State (bool playerfirst); //default constructor
-    Game_State (Game_State& input) ;//this is a custom copy constructor, the default copy constructor does not fit my needs.
+    Game_State (bool playerfirst); //constructor
+    Game_State (void);//default constructor used for making temporary tree objects
+    Game_State (const Game_State& input) ;//this is a custom copy constructor, the default copy constructor does not fit my needs.
 
     void draw_board (void);
     bool make_move (char player_colour, int position);//returns true, and updates the game state if 'position' is a legal move. else, returns false
@@ -71,7 +72,7 @@ class Tree_Node
         double get_node_value(void);
         Tree_Node* get_lower_node (int i);//returns leaves[i]
 
-        Prune ();//recursively delete all the pointers below this one
+        void Prune ();//recursively delete all the pointers below this one
 
 };
 
@@ -82,7 +83,7 @@ class Tree//will store the best possible move at each node
         bool first;//true if player is X, false if computer is X
         //int minimax (bool maximising);//used in constructing the game tree.
 
-        int array[9];//this will store how many nodes there are at each depth.
+        int nodesatdepth[10];//this will store how many nodes there are at each depth.
                     //eg, at depth=0, there should be 9 nodes; and at depth=1, there should be 9*8=72 nodes
 
    public:
@@ -94,6 +95,7 @@ class Tree//will store the best possible move at each node
 
         Tree_Node* current_leaf;//iterator
         Tree_Node* get_node(int i);//returns a pointer to the next node after the current_leaf
+        bool increment_bin(int i);//increments the relevant bin of nodesatdepth
 
 
         //Game_Leaf* picknextmove(double randomness);//returns the next play the computer should make

@@ -57,6 +57,7 @@ bool Computer::make_move(Game_State* p_game)
                  if (trial_leaf->get_node_value()> max)//is this move better than all the other moves found so far?
                  {
                     max= trial_leaf->get_node_value();//it is the best move found so far
+                    tree.current_leaf= trial_leaf;
                     position= i;
                  }
              }
