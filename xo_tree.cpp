@@ -26,6 +26,75 @@ Tree::Tree (Game_State* p_game)//constructor
 
 }
 
+bool Tree::check_tree(void)//checks that the tree is complete, and ouptuts some info to a log file
+{
+    Tree_Node* saved_leaf =current_leaf;//this means that this function can exit without having changed anything in the tree object
+    bool allnodeszero;
+    Tree_Node* upper_leaf=current_leaf;
+
+    for (int d=0; d<9; d++)
+    {
+
+        do
+        {
+            Tree_Node* upper_leaf=current_leaf;
+
+            allnodeszero=true;
+
+            for (int j=0; j<9; j++)
+            {
+
+                current_leaf= upper_leaf->get_lower_node(j);
+
+                if (current_leaf->value!= 0)
+                {
+                    allnodeszero=false;
+                    break;
+                }
+            }
+
+    /*
+                for (int i=0; i<9; i++)
+                {
+                    current_leaf= upper_leaf->get_node(i);
+                    if (current_leaf->get_node_value()!=0)
+                    {
+                        allnodeszero=false;
+                        break;
+                    }
+                }
+                if (allnodeszero==false)
+                    break;
+
+
+            }*/
+            if (allnodeszero=true)
+            {
+                cout<<"at depth=" << current_leaf->state.get_turn()<<", all the nodes have zero value." <<endl;
+            }
+            else
+            {
+               cout << cout<<"at depth=" << current_leaf->state.get_turn()<<",  there exist non zero nodes."<<endl;
+               cout<< "these are the nodes values:" <<endl;
+
+                for (int i=0; i<9; i++)
+                {
+                     current_leaf= upper_leaf->get_lower_node(j);
+
+                     cout<< current_leaf->value<<endl;
+                }
+
+
+            }
+        }while (current_leaf->state.get_turn()<d)
+
+    }
+
+
+
+    current_leaf= saved_leaf;
+}
+
 Tree_Node* Tree::get_node( int i)
 {
 
@@ -53,56 +122,7 @@ bool Tree::increment_bin( int i)
 //-----------------------------
 //Tree_Node stuff
 //--------------------
-/*
-Tree_Node::Tree_Node(Tree* tree, Game_State* p_game, bool maximize)
-{//construct the head node and recursively call Make_Node in order to construct the rest of the tree
-
-    //copy the input game state into this class.
-    //note that the class Game_State has a custom copy constructor.
-    this->state = *p_game;
-
-    //we can work out what colour the curerent player is by considering the fact that X alwatys plays first,
-    //and the computer will always be trying to maximize
-    char colour;
-    if (maximize== p_game->player_first())
-        colour= 'O';
-    else
-        colour= 'X';
-
-    //create some variables that will be used in calcualting the node value:
-    double best_value=0, test_value;
-    Tree_Node temp_node();// this node is constructed using the constructor for temporary Tree_Node objects
-
-
-        for (int i=0; i<9; i++)
-            {
-                tree->array[0]++;
-
-                this->temp_game= state;
-
-                if( temp_game.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
-                {
-
-                    temp_node= new Make_Node(tree, &temp_game, !maximize);//construct the next level down of leaves
-
-                    leaves[i]= &temp_node;
-
-                    test_value= leaves[i]->value;
-
-                    //seacrh for the best node from the next level down
-                    //TODO make the upper node a more complicated combination of the lower nodes
-                    if (maximize==true)
-                        best_value= std::max(test_value, best_value);
-                    else if (maximize==false)
-                        best_value= std::min(test_value, best_value);
-                }
-                else //not an allowed move
-                    leaves[i]= NULL;
-            }
-            value = best_value;//assign this nodes value
-}*/
  Tree_Node::Tree_Node(void) //empty constructor for making temporary Tree_Node objects
-//: state(false), temp_game(false)
  {
      state= Game_State(true);
      //state.get_turn()= 10;//set this to a dissalowed value as a flag for the fact that this is temporary object
@@ -111,7 +131,6 @@ Tree_Node::Tree_Node(Tree* tree, Game_State* p_game, bool maximize)
         leaves[i]= NULL;
  }
 Tree_Node::Tree_Node(const Tree_Node& input) //copy constructor
-//:temp_game(false)
 {
     value= input.value;
     state= input.state;//note that this calls my custom copy operator for Game_State objects
@@ -136,20 +155,14 @@ Tree_Node::Tree_Node(Tree* tree, Game_State* p_game, bool maximize)//construct N
     //we can work out what colour the curerent player is by considering the fact that X alwatys plays first,
     //and the computer will always be trying to maximize
     char colour;
-    if (maximize== p_game->goes_first())
-        colour= 'O';
+    if ( p_game->goes_first()==true)
+        colour= 'O';//player is X, therfore computer is O.
     else
         colour= 'X';
 
     //create some variables that will be used in calcualting the node value:
     double best_value=0, test_value;
     int win_value=1;//this is the wieght that will be assigned for a win
-
-    //Tree_Node temp_node();// this node is constructed using the constructor for temp Tree_Node objects
-    //"new ...." statement allows created object to be assigned directly to a pointer, and therefore this temp object is not neccesary
-
-
-
 
     if (p_game->victory()!= ' ' || this->state.get_turn()> 8 )//base case. This is a terminating node.
     {
@@ -179,8 +192,6 @@ Tree_Node::Tree_Node(Tree* tree, Game_State* p_game, bool maximize)//construct N
                 if ( temp_game.make_move(colour, i)==true)//try to make a move. if its an allowed move, then create the next branch of the tree, and store the info about this particular node.
                 {
                     leaves[i]= new Tree_Node(tree, &temp_game, !maximize);//construct the next level down of leaves
-
-                    //leaves[i]= &temp_node;
 
                     test_value= leaves[i]->value ;
 
