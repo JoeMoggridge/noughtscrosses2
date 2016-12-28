@@ -1,11 +1,14 @@
 
-#include "xo_classes.h"
-#include <algorithm> // needed for calls to max()
 #include <stdio.h>
 #include <iostream>
 #include <string.h>
-using namespace std;
+#include <windows.h>//needed for call to "exit()"
+#include <math.h>
+#include "xo_game.h"//include prototype declarations for game functions.
+                            //the classes themselves are written in other .cpp files
+#include "xo_computer.h"//include prototype declarations for AI classes
 
+using namespace std;
 
 //----------------------------
 //Tree stuff
@@ -26,78 +29,9 @@ Tree::Tree (Game_State* p_game)//constructor
 
 }
 
-bool Tree::check_tree(void)//checks that the tree is complete, and ouptuts some info to a log file
-{
-    Tree_Node* saved_leaf =current_leaf;//this means that this function can exit without having changed anything in the tree object
-    bool allnodeszero;
-    Tree_Node* upper_leaf=current_leaf;
-
-    for (int d=0; d<9; d++)
-    {
-
-        do
-        {
-            Tree_Node* upper_leaf=current_leaf;
-
-            allnodeszero=true;
-
-            for (int j=0; j<9; j++)
-            {
-
-                current_leaf= upper_leaf->get_lower_node(j);
-
-                if (current_leaf->value!= 0)
-                {
-                    allnodeszero=false;
-                    break;
-                }
-            }
-
-    /*
-                for (int i=0; i<9; i++)
-                {
-                    current_leaf= upper_leaf->get_node(i);
-                    if (current_leaf->get_node_value()!=0)
-                    {
-                        allnodeszero=false;
-                        break;
-                    }
-                }
-                if (allnodeszero==false)
-                    break;
-
-
-            }*/
-            if (allnodeszero=true)
-            {
-                cout<<"at depth=" << current_leaf->state.get_turn()<<", all the nodes have zero value." <<endl;
-            }
-            else
-            {
-               cout << cout<<"at depth=" << current_leaf->state.get_turn()<<",  there exist non zero nodes."<<endl;
-               cout<< "these are the nodes values:" <<endl;
-
-                for (int i=0; i<9; i++)
-                {
-                     current_leaf= upper_leaf->get_lower_node(j);
-
-                     cout<< current_leaf->value<<endl;
-                }
-
-
-            }
-        }while (current_leaf->state.get_turn()<d)
-
-    }
-
-
-
-    current_leaf= saved_leaf;
-}
 
 Tree_Node* Tree::get_node( int i)
 {
-
        return current_leaf->get_lower_node(i);
 }
 
