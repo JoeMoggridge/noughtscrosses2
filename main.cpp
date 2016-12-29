@@ -19,6 +19,7 @@
 #include <string.h>
 #include <windows.h>//needed for call to "exit()"
 #include <math.h>
+#include <fstream>
 #include "xo_game.h"//include prototype declarations for game functions.
                             //the classes themselves are written in other .cpp files
 #include "xo_computer.h"//include prototype declarations for AI classes

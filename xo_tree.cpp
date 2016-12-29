@@ -27,6 +27,9 @@ Tree::Tree (Game_State* p_game)//constructor
 
     current_leaf= head;
 
+    Tree_Checker test1(this);
+    test1.check_tree();
+
 }
 
 
@@ -162,6 +165,10 @@ void Tree_Node::Prune()//recursively calls the delete function on all lower node
        leaves[i] -> Prune ();
 
     delete this;
+}
+int Tree_Node::depth(void)
+{
+    return state.get_turn();
 }
 
 

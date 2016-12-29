@@ -2,6 +2,7 @@
 #ifndef xo_computer_H
 #define xo_computer_H
 
+#include <fstream>
 using namespace std;
 
 // ----------------prototype declarations --------------
@@ -15,6 +16,7 @@ class Tree; //forward declaration
 class Tree_Node
 {
     friend class Tree;
+
     protected:
         Game_State state, temp_game;
 
@@ -36,6 +38,7 @@ class Tree_Node
         //functions:
         double get_node_value(void);
         Tree_Node* get_lower_node (int i);//returns leaves[i]
+        int depth(void);
 
 
 
@@ -67,16 +70,25 @@ class Tree_Checker
 {//this is mostly just a useful way of grouping some otherwise confusing functions.
     //note that this class is a friend of class Tree.
 
-        bool output_at_depth(int aimed_depth, Tree_Node* this_leaf);//outputs the values of all the nodes at aimed depth,
+        bool output_at_depth(int aimed_depth, Tree_Node* this_leaf);//outputs the values of all the nodes at aimed depth, that branch from this leaf.
+                                                        //therefore, if you want to out put ALL the nodes at a given depth then you need to pass head_node as the second argument
                                                         //only works if 'this_leaf->state.game_turn' is lower than aimed_depth
                                                         //if this is not the case, then the function returns false.
-        bool tree_is_zero;
+
+        Tree* linked_tree;
+        bool tree_is_zero [9];//this array will store true for each layer of the tree that is all zero.
+                            //initialised to all be false.
+        bool tree_is_good; //initialised to false.
+                            //this variable will subsequently store the return value of the latest call to check_tree
+
+        ofstream logfile;//this will be where information is outputted to.
+
+        bool check_tree(int min_depth, int max_depth);//checks that all the nodes between min_depth and max_depth are non zero.
+
    public:
-        Tree_Checker(Tree tree); //constructor.
+        Tree_Checker(Tree* tree); //constructor.
 
-
-
-        bool check_tree();//returns the value of tree_is_zero;
+        bool check_tree();//calls check_tree(int, int), and then outputs some things to console
 
         //bool check_leaf(Tree_Node* this_leaf);
 
