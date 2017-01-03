@@ -89,13 +89,13 @@ bool Tree_Checker::check_tree()
     }
     else
     {
-        string input;
+        //string input;
         logfile<<endl<<endl;
         logfile<< "--------------------------------------------------" <<endl;
         logfile<< "~~~~~~  TREE IS NOT GOOD!!!!!!!! PROBLEM!!!!~~~~~~" <<endl;
         logfile<< "--------------------------------------------------" <<endl;
         cout<<"(DEBUGGING NOTE: tree is NOT good !!!!!!!!!!!!!!!!! enter any key to continue)"<<endl;
-        cin>> input;
+        //cin>> input;
         return false;
     }
 }

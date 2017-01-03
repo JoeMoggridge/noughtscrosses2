@@ -102,7 +102,7 @@ class Computer: public Player //computer is a subclass of player
 {
     protected:
         Tree tree;
-        char colour;
+
         double randomness;//if randomness is non zero, then the computer will sometimes pick non optimal moves
     public:
         Computer(Game_State* p_game)  ; //will construct the computer object to play as the opposite colour. Also call the game_tree constructor.
