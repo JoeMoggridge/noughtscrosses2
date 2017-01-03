@@ -98,7 +98,7 @@ Tree_Node::Tree_Node(Tree* tree, Game_State* p_game, bool maximize)//construct N
         colour= 'X';
 
     //create some variables that will be used in calcualting the node value:
-    double best_value=0, test_value;
+    double best_value=0, test_value=0;
     int win_value=1;//this is the wieght that will be assigned for a win
 
     if (p_game->victory()!= ' ' || this->state.get_turn()> 8 )//base case. This is a terminating node.

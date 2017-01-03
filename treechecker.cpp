@@ -31,7 +31,7 @@ bool Tree_Checker::output_at_depth (int aimed_depth, Tree_Node* this_leaf)
     bool function_result=true;
     int output;
 
-    if (aimed_depth<1 || aimed_depth>9|| current_depth> aimed_depth)
+    if (aimed_depth<1 || aimed_depth>8|| current_depth> aimed_depth)
         return false;
     else
     {
@@ -49,19 +49,11 @@ bool Tree_Checker::output_at_depth (int aimed_depth, Tree_Node* this_leaf)
         {
             Tree_Node* test_leaf;
 
-            for (int i=0; i<=9;i++)
+            for (int i=0; i<9;i++)
             {
                 test_leaf= this_leaf->get_lower_node(i);//note that get lower node might return NULL!
 
-                //PROBLEM
-                //this part of the program breaks because
-                //for some reason these if statements cant identify when this_leaf is a NULL pointer
-                //GRRRRRR.
-                if (this_leaf==NULL)
-                {
-                    cout<<"im confused"<<endl;
-                }
-                if (this_leaf!= (Tree_Node*)NULL)
+                if (test_leaf!= NULL)
                 {
                     //if a previous leaf has already returned false, then make sure not to overwrite this fact
                     if (function_result== false||output_at_depth(aimed_depth, test_leaf)==false)
@@ -69,7 +61,7 @@ bool Tree_Checker::output_at_depth (int aimed_depth, Tree_Node* this_leaf)
 
                 }
                 else//this node is NULL, notate it so.
-                    logfile<< "- ";
+                    logfile<< "N ";
 
 
             }
@@ -93,14 +85,18 @@ bool Tree_Checker::check_tree()
     {
         logfile<< endl<<endl<<"~~~~~~  TREE IS GOOD ~~~~~~"<<endl;
         cout<<"(DEBUGGING NOTE: tree is good)"<<endl;
+        return true;
     }
     else
     {
+        string input;
         logfile<<endl<<endl;
         logfile<< "--------------------------------------------------" <<endl;
         logfile<< "~~~~~~  TREE IS NOT GOOD!!!!!!!! PROBLEM!!!!~~~~~~" <<endl;
         logfile<< "--------------------------------------------------" <<endl;
-        cout<<"(DEBUGGING NOTE: tree is NOT good !!!!!!!!!!!!!!!!!)"<<endl;
+        cout<<"(DEBUGGING NOTE: tree is NOT good !!!!!!!!!!!!!!!!! enter any key to continue)"<<endl;
+        cin>> input;
+        return false;
     }
 }
 
@@ -121,7 +117,7 @@ bool Tree_Checker::check_tree(int min_depth, int max_depth)
 
     for (int i= min_depth; i<=max_depth; i++)
     {
-        logfile<<"At depth= "<< i <<" nodes have the following values:"<<endl;
+        logfile<<endl<<"At depth= "<< i <<" nodes have the following values:"<<endl;
         if (tree_is_good==false || output_at_depth(i, this_leaf)==false)
             tree_is_good=false;
         logfile<<endl;
