@@ -30,6 +30,7 @@ Computer::Computer (Game_State* p_game)// constructor
 
 //computer fuctions
 bool Computer::make_move(Game_State* p_game)
+  :tree(p_game)//reconstruct the tree based on the fact that the game state has changed.
 {
 
     int position=-1;//initially set the move-to-make to a dissallowed value.
