@@ -162,7 +162,8 @@ double Tree_Node::get_node_value( )
 void Tree_Node::Prune()//recursively calls the delete function on all lower nodes, and then deletes this node.
 {
     for (int i=0; i<9; i++)
-       leaves[i] -> Prune ();
+        if (leaves[i]!= NULL)
+            leaves[i] -> Prune ();
 
     delete this;
 }

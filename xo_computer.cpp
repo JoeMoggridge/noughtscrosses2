@@ -51,7 +51,7 @@ bool Computer::make_move(Game_State* p_game)
         //search the game tree for the best move
         for (int i=0; i<9 ; i++)
         {
-            if (game_copy->make_move(this->get_colour(), i) == true)
+            if (game_copy.make_move(this->get_colour(), i) == true)
             {
                 //this is an allowed place to play.
                 //next, figure out whether it is a good place
