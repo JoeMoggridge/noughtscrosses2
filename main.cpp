@@ -19,92 +19,12 @@
 #include <string.h>
 #include <windows.h>//needed for call to "exit()"
 #include <math.h>
-#include "xo_functions.h"//include prototype declarations for class functions. 
-                            //the classes themselves are written in the cpp file of the same name.
+#include <fstream>
+#include "xo_game.h"//include prototype declarations for game functions.
+                            //the classes themselves are written in other .cpp files
+#include "xo_computer.h"//include prototype declarations for AI classes
 
 using namespace std;
-
-class Game_State
-{
-    char board[9];// board is numbered from 0 to 8.
-    int game_turn;
-public:
-    Game_State (void); //default constructor
-    void draw_board (void);
-    bool make_move (char player_colour, int position);//returns true, and updates the game state if 'position' is a legal move. else, returns false
-    char victory (void);//returns X if X has won, O if O has won. else returns ' '.
-
-};
-
-class Player //abstract class
-{
-protected:
-    char colour;
-public:
-    char get_colour(void);
-    virtual bool make_move(Game_State* p_game) =0;//virtual function because "=0"
-};
-
-class Game_Tree;//prototype declaration
-
-class Computer: public Player //computer is a subclass of player
-{
-    protected:
-        Game_Tree* tree;
-        
-        //TODO: double randomness;//if randomness is non zero, then the computer will sometimes pick non optimal moves
-    public:
-        Computer(char player_colour, bool playergoesfirst):  tree(playergoesfirst); //will construct the computer object to play as the opposite colour. Also call the game_tree constructor.
-        bool make_move (Game_State* p_game);//changes the object passed to it to reflect the new board state
-        int minimax (Game_Tree* node, int depth, bool maximising);
-};
-
-class Human: public Player //human is a subclass of player
-{
-    public:
-        Human (void);//default constructor. lets the player choose his colour
-
-        bool make_move (Game_State* p_game);//returns true if a legal move has just been played. else, returns false
-    //                                  //its important that this function accepts a pointer as its argument, and not he actual class object,
-    //                                  //if it accepted the class itself then a temporay object would be creted of the wrong scope which screws everything up.
-};
-
-class Game_Leaf
-{
-    protected:
-       int game_turn;
-       char board[9];
-
-       //bool max_or_min; //true if this node is a maximum of the previous nodes.
-       double node_value; //+1 for victory from this node, -1 if this node causes loss.
-                            //eventually i plan to a wider variety of numbers here.
-
-       //At each ply, there are potentially up to 8 different ways the game can develop
-       new Game_leaf* leaves [8]; //array of pointers to the potentially up to 8 different game leafs that are below this game leaf.
-                                    //some of the pointers might be NULL if moves cannot be played there
-
-    public:
-        Game_Leaf(bool max_or_min, char* current_board, int ply); //constructor
-
-        double get_node_value(void);
-        double get_next_leaf(int prev_leaf);//returns the next element of the array. ie returns 'leaves[prev_leaf++]''
-};
-class Game_Tree//will store the best possible move at each node
-{
-        Game_Leaf* head;//pointer to the first leaf in the game tree
-        Game_Leaf* current_leaf;
-        bool playergoesfirst;
-   public:
-        Game_Tree(bool playergoesfirst); //constructor. 
-
-        //Game_Leaf* picknextmove(double randomness);//returns the next play the computer should make
-                                                    //if randomness is non zero, then the computer will sometimes pick non optimal moves
-};
-
-
-
-void instructions(void);//prints instruction on how to play to std::out
-
 
 
 /*------------//------------//------------//-----------//-------------*/
@@ -113,20 +33,23 @@ int main()
 
     Human player1;//construct the player. user will be asked what colour they want to play.
 
-    
-    Game_State game1;//construct the game
+    Game_State game1(false);//construct the game
     instructions();//show the instructions
+
 
     if (player1.get_colour()=='X')//if player is playing x, then he goes first
     {
+        Game_State temp(true);
+        game1=temp;//custom copy the temp object into the game1 object.
+                    //I cant simply construct the object within this if statement, because it will go out of scope.
+                    //v annoying.
+
         player1.make_move(&game1);// we must pass a pointer to the class here, not the actual class
         game1.draw_board();
-        
-        Computer computer1(player1.get_colour() , true); //construct the computer, based on what colour the player is
-                                                    //also constructs the game tree
+
     }
-    else
-        Computer computer1(player1.get_colour() , false, ); //construct the computer, based on what colour the player is
+
+    Computer computer1 (&game1 /* ,double randomness */ ); //construct the computer, based on what colour the player is
                                                     //also constructs the game tree
 
     do//repeat until someone wins
@@ -140,7 +63,7 @@ int main()
 
         player1.make_move(&game1);
         game1.draw_board();
-        
+
     }
     while (game1.victory()==' ');
 
