@@ -18,7 +18,7 @@ class Tree_Node
     friend class Tree;
 
     protected:
-        Game_State state, temp_game;
+        Game_State state;
 
         double value; //+1 for victory from this node, -1 if this node causes loss.
                             //eventually i plan to a wider variety of numbers here.
@@ -28,12 +28,15 @@ class Tree_Node
         Tree_Node* leaves [8]; //array of pointers to the potentially up to 8 different game leafs that are below this game leaf.
                                     //some of the pointers might be NULL if moves cannot be played there
 
-        void Prune ();//recursively delete all the pointers below this one
+        //void Prune ();//recursively delete all the pointers below this one
     public:
         //constructors:
         Tree_Node(Tree* tree,  Game_State* p_game, bool maximize);//recursively construct nodes
         Tree_Node(); //empty constructor for making temporary tree_node objects
         Tree_Node(const Tree_Node& input) ;//copy constructor
+
+        //destructor
+        ~Tree_Node();
 
         //functions:
         double get_node_value(void);
@@ -56,11 +59,12 @@ class Tree//will store the best possible move at each node
 
         int nodesatdepth[10];//this will store how many nodes there are at each depth.
                     //eg, at depth=0, there should be 9 nodes; and at depth=1, there should be 9*8=72 nodes
+        void destroytree(Tree_Node* node);
 
    public:
         Tree(Game_State* p_game); //constructor.
 
-        ~Tree();//this destructor calls the prune function from the head down
+        ~Tree();//this destructor calls the destroytree function with the head node as the argument
         Tree_Node* current_leaf;//iterator
         Tree_Node* get_node(int i);//returns a pointer to the next node down in position i branching from the current_leaf
         bool increment_bin(int i);//increments the relevant bin of nodesatdepth

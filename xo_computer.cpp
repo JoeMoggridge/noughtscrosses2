@@ -30,8 +30,11 @@ Computer::Computer (Game_State* p_game)// constructor
 
 //computer fuctions
 bool Computer::make_move(Game_State* p_game)
-  :tree(p_game)//reconstruct the tree based on the fact that the game state has changed.
 {
+    tree.~Tree();
+    tree= Tree(p_game);//reconstruct the tree based on the fact that the game state has changed.
+                        //i think that this is using a copy constructor, which i havent written (its using the default copy constructor).
+                        //this SHOULD be ok, because a member by memeber copy will work fine.
 
     int position=-1;//initially set the move-to-make to a dissallowed value.
 
@@ -39,7 +42,7 @@ bool Computer::make_move(Game_State* p_game)
     Tree_Node* trial_leaf= NULL;
     Game_State game_copy= *p_game;//create a copy of the game
 
-    std::vector<int> goodpositions;//create an empty listof integers. this list will contain all the postions which are equally good.
+    std::vector <int> goodpositions;//create a list of integers. this list will contain all the postions which are equally good.
     int counter;
 
     //loop through searching for moves until the best move is found
@@ -51,6 +54,8 @@ bool Computer::make_move(Game_State* p_game)
         //search the game tree for the best move
         for (int i=0; i<9 ; i++)
         {
+            game_copy= *p_game;//we will do stuff to game_copy, and leave p_game unchanged
+
             if (game_copy.make_move(this->get_colour(), i) == true)
             {
                 //this is an allowed place to play.
@@ -69,7 +74,7 @@ bool Computer::make_move(Game_State* p_game)
                         goodpositions.clear();
                         goodpositions.push_back(position);
                      }
-                     if (trial_leaf->get_node_value()== best)//is this move better than all the other moves found so far?
+                     if (trial_leaf->get_node_value()== best)//is this move at least as good as all the other moves found so far?
                      {
                         best= trial_leaf->get_node_value();//it is one of the best move found so far
                         position= i;
@@ -77,10 +82,12 @@ bool Computer::make_move(Game_State* p_game)
                      }
                  }
                  if (trial_leaf==NULL)
-                    counter++;
+                    counter++;//theoretically, control should never reach here.
 
             }
-            if (goodpositions.empty()==false)
+            //int sze= goodpositions.size();
+
+            if (goodpositions.size()>1)
             {
                 //if there are multiple postions which all have equal value, then pick one randomly.
                 int rand_index = floor(goodpositions.size() * rand()/RAND_MAX);

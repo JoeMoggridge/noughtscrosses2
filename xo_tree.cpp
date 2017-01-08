@@ -40,7 +40,18 @@ Tree_Node* Tree::get_node( int i)
 
 Tree::~Tree()
 {
-        head->Prune ();//destruct everything below the head node, ie destruct everything
+        destroytree(head);//destruct everything below the head node, ie destruct everything
+}
+
+void Tree::destroytree(Tree_Node* node)//recursively calls the delete function on all lower nodes, and then deletes this node.
+{
+    for (int i=0; i<9; i++)
+        if (node->leaves[i]!= NULL)
+        {
+            destroytree(node->leaves[i] );
+        }
+    if (node!= NULL)
+
 }
 
 bool Tree::increment_bin( int i)
@@ -82,6 +93,7 @@ Tree_Node::Tree_Node(Tree* tree, Game_State* p_game, bool maximize)//construct N
     //copy the input game state into this class.
     //note that the class Game_State has a custom copy constructor.
     this->state = *p_game;
+    Game_State temp_game;
 
     if (tree->increment_bin(state.get_turn())==false)//notate the existence of this node
     {
@@ -145,6 +157,17 @@ Tree_Node::Tree_Node(Tree* tree, Game_State* p_game, bool maximize)//construct N
     }
 }
 
+
+{
+    for (int i=0; i<9; i++)
+        if (this->leaves[i]!= NULL)
+        {
+            delete leaves[i];
+        }
+
+
+}
+
 double Tree_Node::get_node_value( )
 {
         return value;
@@ -159,14 +182,6 @@ double Tree_Node::get_node_value( )
         return this->leaves[i];
  }
 
-void Tree_Node::Prune()//recursively calls the delete function on all lower nodes, and then deletes this node.
-{
-    for (int i=0; i<9; i++)
-        if (leaves[i]!= NULL)
-            leaves[i] -> Prune ();
-
-    delete this;
-}
 int Tree_Node::depth(void)
 {
     return state.get_turn();
