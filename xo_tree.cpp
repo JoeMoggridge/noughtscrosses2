@@ -51,6 +51,7 @@ void Tree::destroytree(Tree_Node* node)//recursively calls the delete function o
             destroytree(node->leaves[i] );
         }
     if (node!= NULL)
+        delete node;
 
 }
 
@@ -157,16 +158,15 @@ Tree_Node::Tree_Node(Tree* tree, Game_State* p_game, bool maximize)//construct N
     }
 }
 
-
-{
-    for (int i=0; i<9; i++)
+/*
+Tree_Node::~Tree_Node()//calls the delete function on all lower nodes
         if (this->leaves[i]!= NULL)
         {
             delete leaves[i];
         }
 
 
-}
+}*/
 
 double Tree_Node::get_node_value( )
 {
